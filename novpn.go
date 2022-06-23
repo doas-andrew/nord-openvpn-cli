@@ -58,11 +58,12 @@ func main() {
 		return results[i].Load < results[j].Load
 	})
 
-	oFileAbs := ""
-	oDir := os.Getenv("MY_OVPN_DIR")
+	var oFileAbs = ""
+	var oDir = os.Getenv("MY_NOVPN_DIR")
 	if oDir == "" {
-		oDir = os.ExpandEnv("$HOME/ovpn")
+		oDir = "$HOME/.config/novpn"
 	}
+	oDir = os.ExpandEnv(oDir)
 
 	for _, rec := range results {
 		// Check if this recommendation supports the specified protocol
@@ -82,7 +83,6 @@ func main() {
 		
 		if _, err := os.Stat(oFileAbs); os.IsNotExist(err) {
 			// File does not exist, request it from NordVPN
-			// resp, err = http.Get(fmt.Sprint("https://downloads.nordcdn.com/configs/files/ovpn_legacy/servers/", rec.Hostname, ".", proto, "1194.ovpn"))
 			resp, err = http.Get(fmt.Sprint("https://downloads.nordcdn.com/configs/files/ovpn_", proto, "/servers/", rec.Hostname, ".", proto, ".ovpn"))
 			if err != nil { log.Fatalln(err) }
 			defer resp.Body.Close()
